@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>UPESSC Prayagraj | Law (Subject 64) Advanced Exam Portal</title>
+  
+  <!-- Inter & Merriweather Typography (FreeFellow Academic Aesthetic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Merriweather', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    .safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .drawer-transition {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body class="bg-[#f8fafc] text-slate-800 font-sans antialiased select-none lg:select-auto">
+
+  <!-- SCRIM BACKDROP FOR MOBILE DRAWER -->
+  <div id="drawer-backdrop" 
+       onclick="closeDrawer()" 
+       class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 hidden transition-opacity duration-300 opacity-0 lg:hidden">
+  </div>
+
+  <div class="flex min-h-screen">
+    
+    <!-- SIDEBAR DRAWER (Hidden on mobile, slides on hamburger icon) -->
+    <aside id="sidebar-drawer" 
+           class="fixed lg:static top-0 bottom-0 left-0 z-50 w-72 bg-[#0c1322] text-white flex flex-col justify-between drawer-transition -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none shrink-0">
+      
+      <div class="p-5 safe-top overflow-y-auto">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-[10px] tracking-wider uppercase font-semibold text-blue-400">UPESSC PRAYAGRAJ</span>
+            <h1 class="text-base font-bold text-slate-100 flex items-center gap-1.5 mt-0.5">
+              Law (Subject 64)
+            </h1>
+            <p class="text-[11px] text-slate-400">Assistant Professor Portal</p>
+          </div>
+          <button onclick="closeDrawer()" 
+                  class="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-md hover:bg-slate-800 focus:outline-none"
+                  aria-label="Close menu">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Mode Indicator / Toggle -->
+        <div class="mt-4 p-2 bg-slate-900 rounded-lg border border-slate-800">
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Operating Mode</label>
+          <div class="grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded-md text-xs">
+            <button onclick="switchAppMode('PRACTICE')" id="mode-practice-btn" class="py-1.5 rounded font-semibold transition bg-blue-600 text-white">
+              Practice
+            </button>
+            <button onclick="switchAppMode('EXAM')" id="mode-exam-btn" class="py-1.5 rounded font-semibold transition text-slate-400 hover:text-white">
+              Mock Exam
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="mt-4 space-y-1.5">
+          <a href="#" onclick="setFilterMode('ALL'); closeDrawer();" 
+             id="nav-all"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-600 text-white font-medium text-sm transition shadow-xs">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span>All 10 Units</span>
+          </a>
+
+          <a href="#" onclick="openDiagnosticMatrix(); closeDrawer();" 
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white text-sm transition">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i>
+            <span>Syllabus Matrix (10 Units)</span>
+          </a>
+
+          <a href="#" onclick="openPalette(); closeDrawer();" 
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white text-sm transition">
+            <i data-lucide="grid-3x3" class="w-4 h-4 text-blue-400"></i>
+            <span>Question Palette</span>
+          </a>
+
+          <a href="#" onclick="toggleBookmarkOnlyFilter(); closeDrawer();" 
+             id="nav-bookmarks"
+             class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white text-sm transition">
+            <div class="flex items-center gap-3">
+              <i data-lucide="bookmark" class="w-4 h-4 text-amber-400"></i>
+              <span>Saved Bookmarks</span>
+            </div>
+            <span id="drawer-bookmarks-count" class="text-xs bg-slate-800 text-amber-300 px-2 py-0.5 rounded-full font-bold">0</span>
+          </a>
+
+          <a href="#" onclick="openJsonModal(); closeDrawer();" 
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-emerald-400 hover:bg-slate-800 hover:text-emerald-300 text-sm font-medium transition border border-emerald-500/20 bg-emerald-950/20">
+            <i data-lucide="database" class="w-4 h-4"></i>
+            <span>Manage Bank (JSON)</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Bottom Session Stats & Reset -->
+      <div class="p-4 border-t border-slate-800 bg-[#080d17] safe-bottom">
+        <div class="bg-slate-800/80 rounded-lg p-3 text-xs mb-3 border border-slate-700/60">
+          <div class="flex justify-between items-center text-slate-400 mb-1">
+            <span>Overall Accuracy</span>
+            <span id="drawer-accuracy" class="font-bold text-emerald-400">0%</span>
+          </div>
+          <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+            <div id="drawer-accuracy-bar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400 mt-2">
+            <span>IndexedDB Qs: <b id="drawer-total-qs" class="text-white">10</b></span>
+            <span>Attempted: <b id="drawer-attempted" class="text-blue-400">0</b></span>
+          </div>
+        </div>
+
+        <button onclick="confirmReset()" 
+                class="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 hover:text-red-400 hover:bg-red-950/30 rounded-md transition">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          <span>Reset Session Analytics</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN APPLICATION VIEW -->
+    <div class="flex-1 flex flex-col min-w-0">
+
+      <!-- Sticky Top Header -->
+      <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 py-2.5 safe-top">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+          
+          <div class="flex items-center gap-3">
+            <button onclick="openDrawer()" 
+                    class="p-2 -ml-1 text-slate-700 hover:text-blue-600 hover:bg-slate-100 rounded-lg lg:hidden active:scale-95 transition"
+                    aria-label="Toggle navigation drawer">
+              <i data-lucide="menu" class="w-6 h-6 stroke-[2.2]"></i>
+            </button>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span id="header-mode-badge" class="px-1.5 py-0.2 bg-blue-100 text-blue-700 text-[10px] font-bold rounded uppercase">
+                  Practice Mode
+                </span>
+                <span id="exam-timer-display" class="hidden text-xs font-mono font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+                  120:00
+                </span>
+              </div>
+              <h2 class="text-xs sm:text-sm font-bold text-slate-900 tracking-tight leading-tight">UPESSC Law (Subject 64)</h2>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex items-center gap-2">
+            <button onclick="openPalette()" 
+                    class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition">
+              <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+              <span>Q: <span id="header-q-index">1</span>/<span id="header-q-total">10</span></span>
+            </button>
+
+            <button onclick="toggleBookmarkCurrent()" 
+                    id="header-bookmark-btn" 
+                    class="p-1.5 text-slate-400 hover:text-amber-500 rounded-md transition" 
+                    title="Bookmark Question">
+              <i data-lucide="bookmark" class="w-5 h-5"></i>
+            </button>
+
+            <button onclick="submitMockExam()" 
+                    id="header-finish-btn" 
+                    class="hidden px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-md shadow-xs transition">
+              Submit Test
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main View -->
+      <main class="flex-1 p-3 sm:p-6 max-w-4xl w-full mx-auto" id="swipe-surface">
+        
+        <!-- Filter & Real-Time Full-Text Search Engine -->
+        <section class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-xs mb-4">
+          <div class="flex flex-col gap-3">
+            
+            <!-- Full Text Search Input -->
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+              <input type="text" 
+                     id="search-input" 
+                     oninput="handleSearch(this.value)" 
+                     placeholder="Search 5,000+ Qs by doctrine, section, case law (e.g., 'Article 21', 'Pith', 'Hart')..." 
+                     class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <button onclick="clearSearch()" id="search-clear-btn" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x-circle" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-100">
+              <!-- Syllabus Unit Filter -->
+              <div class="flex-1">
+                <select id="unit-filter" 
+                        onchange="handleUnitFilterChange(this.value)" 
+                        class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-lg p-2 font-medium outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="ALL">All 10 Units (Full Law Syllabus)</option>
+                  <option value="UNIT-I">Unit-I: Constitutional & Administrative Law</option>
+                  <option value="UNIT-II">Unit-II: Jurisprudence & Legal Theory</option>
+                  <option value="UNIT-III">Unit-III: Law of Crimes & IPC</option>
+                  <option value="UNIT-IV">Unit-IV: Law of Torts & Consumer Protection</option>
+                  <option value="UNIT-V">Unit-V: Public International Law & IHL</option>
+                  <option value="UNIT-VI">Unit-VI: Commercial Law (Contracts, Companies)</option>
+                  <option value="UNIT-VII">Unit-VII: Family Law (Personal Laws, UCC)</option>
+                  <option value="UNIT-VIII">Unit-VIII: Environment & Human Rights Law</option>
+                  <option value="UNIT-IX">Unit-IX: Intellectual Property & Cyber Law</option>
+                  <option value="UNIT-X">Unit-X: Comparative Public Law & Governance</option>
+                </select>
+              </div>
+
+              <!-- PYQ Toggle & Fast Jump -->
+              <div class="flex items-center justify-between sm:justify-start gap-4">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="pyq-checkbox" onchange="handlePYQToggle(this.checked)" class="sr-only peer">
+                  <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                  <span class="ml-2 text-xs font-semibold text-slate-700">PYQs</span>
+                </label>
+
+                <!-- Fast Direct Number Jump -->
+                <div class="flex items-center gap-1">
+                  <span class="text-xs text-slate-500 font-medium">Jump:</span>
+                  <input type="number" 
+                         id="jump-input" 
+                         placeholder="No." 
+                         min="1" 
+                         onkeydown="if(event.key==='Enter') executeJump()" 
+                         class="w-14 bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs text-center font-bold focus:ring-1 focus:ring-blue-500 outline-none" />
+                  <button onclick="executeJump()" class="p-1 text-xs bg-slate-200 hover:bg-slate-300 rounded text-slate-700 font-semibold px-2">Go</button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Active Filter / Exam Banner -->
+        <div id="filter-status-banner" class="hidden mb-3 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg flex items-center justify-between text-xs text-amber-900">
+          <span id="banner-text">Viewing filtered subset</span>
+          <button onclick="setFilterMode('ALL')" class="font-bold underline text-amber-950">Reset All Filters</button>
+        </div>
+
+        <!-- Question Card (FreeFellow Academic Style) -->
+        <article id="question-card" class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden mb-5">
+          
+          <div class="px-4 py-3 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span id="q-unit-badge" class="font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded text-[11px] uppercase tracking-wide">
+                UNIT-I · CONSTITUTIONAL LAW
+              </span>
+              <span id="q-pyq-badge" class="font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[10px]">
+                PYQ 2021
+              </span>
+            </div>
+            <span id="q-number-pill" class="text-slate-500 font-semibold">Q. 1</span>
+          </div>
+
+          <div class="p-4 sm:p-6">
+            <h3 id="q-text" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed font-serif">
+              Loading question...
+            </h3>
+
+            <div id="options-container" class="mt-5 space-y-2.5">
+              <!-- Options rendered here dynamically -->
+            </div>
+          </div>
+
+          <!-- FreeFellow Case Law & Ratio Decidendi Analysis (Hidden in Exam Mode) -->
+          <section id="analysis-container" class="hidden border-t border-slate-200 bg-slate-50/90 p-4 sm:p-6 transition-all duration-300">
+            <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3">
+              <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+              <span>FreeFellow Academic Analysis & Case Law</span>
+            </div>
+
+            <div class="space-y-3.5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+              <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
+                <h4 class="font-semibold text-blue-900 uppercase tracking-wider text-[11px] mb-1">Concept Tested</h4>
+                <p id="analysis-concept" class="text-slate-800"></p>
+              </div>
+
+              <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
+                <h4 class="font-semibold text-blue-900 uppercase tracking-wider text-[11px] mb-1">Constitutional / Statutory Grounding</h4>
+                <p id="analysis-statutes" class="text-slate-800"></p>
+              </div>
+
+              <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
+                <h4 class="font-semibold text-blue-900 uppercase tracking-wider text-[11px] mb-1">Landmark Precedents & Ratio Decidendi</h4>
+                <p id="analysis-precedents" class="text-slate-800 italic"></p>
+              </div>
+
+              <div class="bg-amber-50/80 border border-amber-200 p-3 rounded-lg text-amber-900">
+                <strong class="text-amber-950 font-bold block mb-0.5 text-[11px] uppercase">UPESSC Exam Tip:</strong>
+                <span id="analysis-examtip"></span>
+              </div>
+            </div>
+          </section>
+        </article>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between gap-3 pb-8 safe-bottom">
+          <button id="prev-btn" 
+                  onclick="navigateQuestion(-1)" 
+                  class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-white border border-slate-300 font-medium text-slate-700 text-sm hover:bg-slate-50 active:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed shadow-xs transition">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            <span>Previous</span>
+          </button>
+
+          <button id="next-btn" 
+                  onclick="navigateQuestion(1)" 
+                  class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 font-semibold text-white text-sm hover:bg-blue-700 active:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed shadow-xs transition">
+            <span>Next</span>
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- DIAGNOSTIC MASTERY MATRIX MODAL (Tracks All 10 Units) -->
+  <div id="matrix-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-sm sm:text-base">10-Unit Syllabus Diagnostic Matrix</h3>
+          <p class="text-xs text-slate-400">UPESSC Subject 64 Performance Diagnostics</p>
+        </div>
+        <button onclick="closeDiagnosticMatrix()" class="p-1 text-slate-400 hover:text-white rounded-md">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-5 flex-1 overflow-y-auto space-y-3" id="matrix-content">
+        <!-- Injected dynamically -->
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-200 text-right">
+        <button onclick="closeDiagnosticMatrix()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-100">
+          Close Matrix
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTION PALETTE MODAL (Paginated Range for 5,000 Qs) -->
+  <div id="palette-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+      <div class="px-5 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-slate-800 text-sm sm:text-base">Question Palette</h3>
+        <button onclick="closePalette()" class="p-1 text-slate-400 hover:text-slate-700 rounded-md">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between gap-2 text-xs">
+        <span class="text-slate-500 font-medium">Page Range:</span>
+        <select id="palette-range-select" onchange="renderPaletteGrid(parseInt(this.value))" class="bg-white border border-slate-300 rounded px-2 py-1 font-semibold text-slate-700 outline-none">
+        </select>
+      </div>
+
+      <div class="p-4 flex-1 overflow-y-auto">
+        <div class="flex items-center justify-around text-xs text-slate-600 mb-3 pb-2 border-b border-slate-100">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Correct</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Wrong</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> Unattempted</span>
+        </div>
+        <div id="palette-grid" class="grid grid-cols-5 gap-2 text-center"></div>
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-100 text-right">
+        <button onclick="closePalette()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-100">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSON IMPORTER MODAL (Supports Direct File Upload & Paste) -->
+  <div id="json-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="database" class="w-5 h-5 text-emerald-400"></i>
+          <h3 class="font-bold text-sm sm:text-base">IndexedDB Question Bank Manager</h3>
+        </div>
+        <button onclick="closeJsonModal()" class="p-1 text-slate-400 hover:text-white rounded-md">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-5 flex-1 overflow-y-auto space-y-3">
+        <div class="bg-slate-50 p-3 rounded-lg border border-dashed border-slate-300 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-slate-800 block">Select JSON File from Device:</span>
+            <span class="text-[11px] text-slate-500">Capable of loading 5,000+ questions directly into IndexedDB</span>
+          </div>
+          <input type="file" id="json-file-input" accept=".json" onchange="handleFileUpload(event)" class="text-xs max-w-[170px]" />
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <span class="text-xs text-slate-600 font-medium">Or Paste Raw JSON:</span>
+          <button onclick="insertSampleJson()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 underline">
+            Load Sample Template
+          </button>
+        </div>
+
+        <textarea id="json-input" 
+                  rows="7" 
+                  placeholder='[{"id": 11, "unit": "UNIT-I", "unitName": "Constitutional Law", "isPYQ": true, "pyqYear": "2023", "question": "...", "options": ["A", "B", "C", "D"], "correctAnswer": 0, "analysis": { "concept": "...", "statutes": "...", "precedents": "...", "examTip": "..." }}]'
+                  class="w-full font-mono text-xs p-3 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+        
+        <div id="json-feedback" class="hidden p-2.5 rounded text-xs font-medium"></div>
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2">
+        <button onclick="exportQuestionsJson()" class="px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-100 flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Export All JSON</span>
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button onclick="closeJsonModal()" class="px-3 py-2 text-xs text-slate-600 font-medium hover:bg-slate-100 rounded">
+            Cancel
+          </button>
+          <button onclick="importJsonData()" class="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded shadow-xs flex items-center gap-1.5">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span>Import to IndexedDB</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOCK EXAM RESULT SCORECARD MODAL -->
+  <div id="scorecard-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-base">UPESSC Mock Exam Scorecard</h3>
+          <p class="text-xs text-slate-400">Standard UPESSC Negative Marking Calculation</p>
+        </div>
+        <button onclick="closeScorecard()" class="p-1 text-slate-400 hover:text-white rounded-md">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 flex-1 overflow-y-auto space-y-4" id="scorecard-content">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-200 text-right">
+        <button onclick="closeScorecard(); switchAppMode('PRACTICE');" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 rounded hover:bg-blue-700">
+          Review in Practice Mode
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION ARCHITECTURE JAVASCRIPT ENGINE -->
+  <script>
+    /* ============================================================
+       INDEXEDDB PERSISTENCE ENGINE (Bypasses 5MB LocalStorage Limit)
+       ============================================================ */
+    const DB_NAME = 'UPESSC_Law_DB';
+    const DB_VERSION = 1;
+    let dbInstance = null;
+
+    function openDatabase() {
+      return new Promise((resolve, reject) => {
+        if (dbInstance) return resolve(dbInstance);
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('questions')) {
+            db.createObjectStore('questions', { keyPath: 'id' });
+          }
+          if (!db.objectStoreNames.contains('metadata')) {
+            db.createObjectStore('metadata', { keyPath: 'key' });
+          }
+        };
+        req.onsuccess = (e) => {
+          dbInstance = e.target.result;
+          resolve(dbInstance);
+        };
+        req.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    async function dbGetAllQuestions() {
+      const db = await openDatabase();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('questions', 'readonly');
+        const store = tx.objectStore('questions');
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function dbBulkSaveQuestions(questions) {
+      const db = await openDatabase();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('questions', 'readwrite');
+        const store = tx.objectStore('questions');
+        questions.forEach(q => store.put(q));
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function dbGetMetadata(key) {
+      const db = await openDatabase();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('metadata', 'readonly');
+        const store = tx.objectStore('metadata');
+        const req = store.get(key);
+        req.onsuccess = () => resolve(req.result ? req.result.value : null);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function dbSetMetadata(key, value) {
+      const db = await openDatabase();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('metadata', 'readwrite');
+        const store = tx.objectStore('metadata');
+        store.put({ key, value });
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    /* ============================================================
+       UPESSC SUBJECT 64 (LAW) MASTER SEED QUESTIONS (10 UNITS)
+       ============================================================ */
+    const MASTER_SEED_QUESTIONS = [
+      {
+        id: 1,
+        unit: "UNIT-I",
+        unitName: "Constitutional & Administrative Law",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "The doctrine of 'Pith and Substance' is primarily applied to resolve conflicts regarding which of the following provisions of the Constitution of India?",
+        options: [
+          "Distribution of legislative powers under Article 246 and Seventh Schedule",
+          "Pre-constitutional laws inconsistent with Fundamental Rights under Article 13(1)",
+          "Administrative directions issued by Union to States under Article 256",
+          "Special power of Parliament to amend the Constitution under Article 368"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "The doctrine examines the true nature, character, and primary substance of an enactment to ascertain legislative competence when an incidental encroachment occurs between Union and State lists.",
+          statutes: "Article 246 read with the Seventh Schedule (Union, State, and Concurrent Lists).",
+          precedents: "Prafulla Kumar Mukherjee v. Bank of Commerce (1947 PC); State of Bombay v. F.N. Balsara (1951 SC); State of Rajasthan v. G. Chawla (1959 SC).",
+          examTip: "Incidental encroachment onto another list does not invalidate legislation provided its primary pith and substance falls within the competent legislature's list."
+        }
+      },
+      {
+        id: 2,
+        unit: "UNIT-II",
+        unitName: "Jurisprudence & Legal Theory",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "Who among the following legal philosophers expounded the concept of Law as a 'Union of Primary and Secondary Rules'?",
+        options: [
+          "John Austin",
+          "H.L.A. Hart",
+          "Hans Kelsen",
+          "Roscoe Pound"
+        ],
+        correctAnswer: 1,
+        analysis: {
+          concept: "H.L.A. Hart in 'The Concept of Law' (1961) defined a municipal legal system as the union of primary rules of obligation and secondary rules of recognition, change, and adjudication.",
+          statutes: "Modern Analytical Positivism.",
+          precedents: "Critique of Austin's command-and-sanction model of jurisprudence.",
+          examTip: "Hart recognized the 'Rule of Recognition' as the foundational criterion validating all other rules within a legal order."
+        }
+      },
+      {
+        id: 3,
+        unit: "UNIT-III",
+        unitName: "Law of Crimes & IPC",
+        isPYQ: true,
+        pyqYear: "2018",
+        question: "Under Section 84 of the Indian Penal Code (IPC), the standard of mental incapacity required to establish a valid defense is:",
+        options: [
+          "Medical insanity diagnosed prior to the occurrence",
+          "Legal insanity at the exact time of committing the act",
+          "Emotional disturbance or loss of emotional self-control",
+          "Subsequent clinical neurosis identified during judicial trial"
+        ],
+        correctAnswer: 1,
+        analysis: {
+          concept: "Section 84 IPC is rooted in the historic M'Naghten Rules (1843). The defense must prove cognitive incapacity to know the nature of the act or that it was wrong or contrary to law.",
+          statutes: "Section 84 IPC 1860; Section 105 Indian Evidence Act 1872 (Burden of proof on accused).",
+          precedents: "Surendra Mishra v. State of Jharkhand (2011); Dahyabhai Chhaganbhai Thakkar v. State of Gujarat (1964).",
+          examTip: "Every medically insane individual is not legally insane; legal insanity requires complete failure of cognitive perception at the time of crime."
+        }
+      },
+      {
+        id: 4,
+        unit: "UNIT-IV",
+        unitName: "Law of Torts & Consumer Protection",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "The principle of 'Absolute Liability' in India, which does not admit any of the exceptions available under the Rule in Rylands v. Fletcher, was established in:",
+        options: [
+          "Donoghue v. Stevenson",
+          "M.C. Mehta v. Union of India (Oleum Gas Leak Case)",
+          "Municipal Corporation of Delhi v. Subhagwanti",
+          "Rayland v. Fletcher"
+        ],
+        correctAnswer: 1,
+        analysis: {
+          concept: "The Supreme Court formulated Absolute Liability for hazardous or inherently dangerous industrial enterprises, eliminating the defences of Act of God, plaintiff's consent, or sabotage.",
+          statutes: "Article 32 & 21 of the Indian Constitution; Tort Law jurisprudence.",
+          precedents: "M.C. Mehta v. Union of India (AIR 1987 SC 1086); Union Carbide Corporation v. Union of India (1991).",
+          examTip: "Absolute Liability applies strictly to hazardous enterprises without any of the 5 exceptions found in Rylands v. Fletcher (1868)."
+        }
+      },
+      {
+        id: 5,
+        unit: "UNIT-V",
+        unitName: "Public International Law & IHL",
+        isPYQ: false,
+        pyqYear: null,
+        question: "According to Article 38(1) of the Statute of the International Court of Justice (ICJ), which of the following is considered a 'subsidiary means' for the determination of rules of law?",
+        options: [
+          "International conventions establishing rules expressly recognized",
+          "International custom, as evidence of a general practice accepted as law",
+          "Judicial decisions and the teachings of the most highly qualified publicists",
+          "General principles of law recognized by civilized nations"
+        ],
+        correctAnswer: 2,
+        analysis: {
+          concept: "Article 38(1) classifies sources into primary sources (treaties, customs, general principles) and subsidiary means (judicial decisions and juristic writings).",
+          statutes: "Article 38(1)(d) of the Statute of the International Court of Justice.",
+          precedents: "North Sea Continental Shelf Cases (1969 ICJ); Nicaragua v. United States (1986 ICJ).",
+          examTip: "Judicial decisions under Article 59 of ICJ Statute have no binding force except between the parties; there is no strict stare decisis."
+        }
+      },
+      {
+        id: 6,
+        unit: "UNIT-VI",
+        unitName: "Commercial Law",
+        isPYQ: true,
+        pyqYear: "2019",
+        question: "Under the Indian Contract Act, 1872, an agreement without consideration is void under Section 25, EXCEPT when it is:",
+        options: [
+          "Made out of natural love and affection between parties in close relation, expressed in writing and registered",
+          "An oral promise made before respectable community witnesses",
+          "Made between commercial entities possessing existing bank guarantees",
+          "Entered into under conditional performance covenants"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "Section 25 provides 3 exceptions to the rule 'ex nudo pacto non oritur actio': (1) natural love and affection in writing & registered; (2) compensation for past voluntary service; (3) promise to pay a time-barred debt.",
+          statutes: "Section 25(1), (2), (3) of the Indian Contract Act, 1872.",
+          precedents: "Rajlukhy Dabee v. Bhootnath Mookerjee (1900); Durga Prasad v. Baldeo (1880).",
+          examTip: "Near relation does not necessarily imply natural love and affection; both elements along with registration are mandatory under Sec. 25(1)."
+        }
+      },
+      {
+        id: 7,
+        unit: "UNIT-VII",
+        unitName: "Family Law",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "Under Section 6 of the Hindu Succession Act, 1956 (as amended by the Amendment Act of 2005), a daughter of a coparcener:",
+        options: [
+          "Acquires coparcenary rights only if her father was alive on September 9, 2005",
+          "Becomes a coparcener by birth in her own right in the same manner as a son",
+          "Possesses only limited rights of maintenance without coparcenary status",
+          "Can claim partition only with the consent of all surviving male coparceners"
+        ],
+        correctAnswer: 1,
+        analysis: {
+          concept: "The 2005 amendment conferred equal coparcenary rights upon daughters by birth, extinguishing gender discrimination in Mitakshara coparcenary property.",
+          statutes: "Section 6 of the Hindu Succession Act, 1956; Hindu Succession (Amendment) Act 2005.",
+          precedents: "Vineeta Sharma v. Rakesh Sharma (2020 9 SCC 1); Prakash v. Phulavati (overruled).",
+          examTip: "In Vineeta Sharma, a 3-judge bench clarified that the daughter's right is by birth and the father need not have been alive on September 9, 2005."
+        }
+      },
+      {
+        id: 8,
+        unit: "UNIT-VIII",
+        unitName: "Environment & Human Rights Law",
+        isPYQ: false,
+        pyqYear: null,
+        question: "The 'Precautionary Principle' and 'Polluter Pays Principle' were explicitly declared as essential features of sustainable development and part of the law of the land in:",
+        options: [
+          "Vellore Citizens' Welfare Forum v. Union of India",
+          "Subhash Kumar v. State of Bihar",
+          "Rural Litigation and Entitlement Kendra, Dehradun v. State of U.P.",
+          "Sachidanand Pandey v. State of West Bengal"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "The Supreme Court integrated international environmental jurisprudence from the Rio Declaration 1992 into Articles 21, 48A, and 51A(g) of the Constitution.",
+          statutes: "Environment (Protection) Act, 1986; Articles 21 and 48A of the Constitution of India.",
+          precedents: "Vellore Citizens' Welfare Forum v. Union of India (AIR 1996 SC 2715); Indian Council for Enviro-Legal Action (1996).",
+          examTip: "Vellore Citizens case held that the onus of proof is on the actor or developer to demonstrate that its action is environmentally benign."
+        }
+      },
+      {
+        id: 9,
+        unit: "UNIT-IX",
+        unitName: "Intellectual Property & Cyber Law",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "Under the Information Technology Act, 2000, Section 66A was struck down as unconstitutional for violating Article 19(1)(a) of the Constitution in:",
+        options: [
+          "Shreya Singhal v. Union of India",
+          "Justice K.S. Puttaswamy v. Union of India",
+          "Anuradha Bhasin v. Union of India",
+          "Navtej Singh Johar v. Union of India"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "Section 66A criminalized sending offensive messages through computer systems. The Supreme Court struck it down due to vagueness, chilling effect on free speech, and overbreadth.",
+          statutes: "Section 66A of Information Technology Act 2000; Article 19(1)(a) & 19(2) of the Constitution.",
+          precedents: "Shreya Singhal v. Union of India (AIR 2015 SC 1523).",
+          examTip: "The Court distinguished between 'discussion', 'advocacy', and 'incitement', holding that clear incitement is required to attract Article 19(2) restrictions."
+        }
+      },
+      {
+        id: 10,
+        unit: "UNIT-X",
+        unitName: "Comparative Public Law & Governance",
+        isPYQ: false,
+        pyqYear: null,
+        question: "In comparative constitutionalism, the doctrine of 'Judicial Review' of legislative enactments was first explicitly established in the United States in:",
+        options: [
+          "Marbury v. Madison (1803)",
+          "McCulloch v. Maryland (1819)",
+          "Gibbons v. Ogden (1824)",
+          "Dred Scott v. Sandford (1857)"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "Chief Justice John Marshall established that an act of the legislature repugnant to the Constitution is void, cementing the power of the judiciary to invalidate unconstitutional statutes.",
+          statutes: "United States Constitution Article III; Comparative Judicial Review.",
+          precedents: "Marbury v. Madison, 5 U.S. (1 Cranch) 137 (1803); L. Chandra Kumar v. Union of India (1997) in India.",
+          examTip: "Unlike the US Constitution where judicial review was judicially inferred, the Indian Constitution explicitly provides for judicial review under Articles 13, 32, and 226."
+        }
+      }
+    ];
+
+    /* ============================================================
+       APPLICATION STATE & CONTROLLERS
+       ============================================================ */
+    let QUESTION_BANK = [];
+    let appMode = 'PRACTICE'; // 'PRACTICE' | 'EXAM'
+    let examTimeSeconds = 7200; // 120 minutes
+    let examTimerInterval = null;
+
+    let state = {
+      selectedUnit: 'ALL',
+      pyqsOnly: false,
+      onlyBookmarks: false,
+      searchQuery: '',
+      currentIndex: 0,
+      userAnswers: {},
+      bookmarks: []
+    };
+
+    /* Full Text Search Engine Indexer */
+    function searchMatches(q, token) {
+      if (!token) return true;
+      const lower = token.toLowerCase();
+      if (q.question && q.question.toLowerCase().includes(lower)) return true;
+      if (q.options && q.options.some(opt => opt.toLowerCase().includes(lower))) return true;
+      if (q.analysis) {
+        if (q.analysis.concept && q.analysis.concept.toLowerCase().includes(lower)) return true;
+        if (q.analysis.statutes && q.analysis.statutes.toLowerCase().includes(lower)) return true;
+        if (q.analysis.precedents && q.analysis.precedents.toLowerCase().includes(lower)) return true;
+        if (q.analysis.examTip && q.analysis.examTip.toLowerCase().includes(lower)) return true;
+      }
+      return false;
+    }
+
+    function getFilteredQuestions() {
+      return QUESTION_BANK.filter(q => {
+        if (state.onlyBookmarks && !state.bookmarks.includes(q.id)) return false;
+        if (state.selectedUnit !== 'ALL' && q.unit !== state.selectedUnit) return false;
+        if (state.pyqsOnly && !q.isPYQ) return false;
+        if (state.searchQuery && !searchMatches(q, state.searchQuery)) return false;
+        return true;
+      });
+    }
+
+    function sanitizeCurrentIndex(activeQuestions) {
+      if (activeQuestions.length === 0) {
+        state.currentIndex = 0;
+      } else if (state.currentIndex >= activeQuestions.length) {
+        state.currentIndex = activeQuestions.length - 1;
+      } else if (state.currentIndex < 0) {
+        state.currentIndex = 0;
+      }
+      saveSessionState();
+    }
+
+    /* Sound Synthesizer */
+    function playBeep(type) {
+      if (appMode === 'EXAM') return; // Silent in exam simulation
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'correct') {
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        } else {
+          osc.frequency.setValueAtTime(260, ctx.currentTime);
+          osc.frequency.setValueAtTime(220, ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    /* Core Render Engine */
+    function renderApp() {
+      const activeQuestions = getFilteredQuestions();
+      sanitizeCurrentIndex(activeQuestions);
+
+      const qCard = document.getElementById('question-card');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const analysisBox = document.getElementById('analysis-container');
+      const banner = document.getElementById('filter-status-banner');
+      const bannerText = document.getElementById('banner-text');
+
+      document.getElementById('unit-filter').value = state.selectedUnit;
+      document.getElementById('pyq-checkbox').checked = state.pyqsOnly;
+      document.getElementById('drawer-bookmarks-count').innerText = state.bookmarks.length;
+      document.getElementById('drawer-total-qs').innerText = QUESTION_BANK.length;
+
+      // Banner text update
+      if (state.onlyBookmarks) {
+        bannerText.innerHTML = "Reviewing <b>Saved Bookmarks</b> only";
+        banner.classList.remove('hidden');
+      } else if (state.searchQuery) {
+        bannerText.innerHTML = `Search matches for: <b>"${state.searchQuery}"</b> (${activeQuestions.length} found)`;
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      // Empty State
+      if (activeQuestions.length === 0) {
+        qCard.innerHTML = `
+          <div class="p-8 text-center text-slate-500">
+            <i data-lucide="alert-circle" class="w-10 h-10 mx-auto text-amber-500 mb-2"></i>
+            <p class="font-semibold text-slate-800">No questions matched the active filters or search.</p>
+            <p class="text-xs mt-1">Try resetting filters, clearing search, or importing new questions.</p>
+            <button onclick="clearSearch(); setFilterMode('ALL');" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md text-xs font-semibold">
+              Reset Filters & Show All
+            </button>
+          </div>
+        `;
+        document.getElementById('header-q-index').innerText = "0";
+        document.getElementById('header-q-total').innerText = "0";
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        lucide.createIcons();
+        updateDrawerStats();
+        return;
+      }
+
+      const q = activeQuestions[state.currentIndex];
+      const hasAnswered = state.userAnswers.hasOwnProperty(q.id);
+      const selectedOptionIndex = state.userAnswers[q.id];
+
+      document.getElementById('header-q-index').innerText = state.currentIndex + 1;
+      document.getElementById('header-q-total').innerText = activeQuestions.length;
+
+      document.getElementById('q-unit-badge').innerText = `${q.unit || 'UNIT'} · ${(q.unitName || '').toUpperCase()}`;
+      const pyqBadge = document.getElementById('q-pyq-badge');
+      if (q.isPYQ) {
+        pyqBadge.innerText = `PYQ ${q.pyqYear || ''}`;
+        pyqBadge.classList.remove('hidden');
+      } else {
+        pyqBadge.classList.add('hidden');
+      }
+      document.getElementById('q-number-pill').innerText = `Q. ${state.currentIndex + 1} of ${activeQuestions.length}`;
+
+      const isBookmarked = state.bookmarks.includes(q.id);
+      const bookmarkBtn = document.getElementById('header-bookmark-btn');
+      bookmarkBtn.innerHTML = `<i data-lucide="bookmark" class="w-5 h-5 ${isBookmarked ? 'text-amber-500 fill-amber-500' : 'text-slate-400'}"></i>`;
+
+      document.getElementById('q-text').innerText = `${state.currentIndex + 1}. ${q.question}`;
+
+      const optionsContainer = document.getElementById('options-container');
+      const letterPrefixes = ['A', 'B', 'C', 'D', 'E'];
+      
+      optionsContainer.innerHTML = q.options.map((option, idx) => {
+        let styleClasses = "border-slate-200 hover:bg-slate-50 text-slate-800 bg-white";
+        let letterBadgeStyle = "bg-slate-100 text-slate-700 border-slate-300";
+
+        if (hasAnswered) {
+          if (appMode === 'PRACTICE') {
+            // Instant feedback
+            if (idx === q.correctAnswer) {
+              styleClasses = "border-emerald-500 bg-emerald-50 text-emerald-950 font-medium ring-1 ring-emerald-500";
+              letterBadgeStyle = "bg-emerald-600 text-white border-emerald-600";
+            } else if (idx === selectedOptionIndex) {
+              styleClasses = "border-rose-500 bg-rose-50 text-rose-950 ring-1 ring-rose-500";
+              letterBadgeStyle = "bg-rose-600 text-white border-rose-600";
+            } else {
+              styleClasses = "border-slate-200 bg-slate-50/50 text-slate-400 opacity-60";
+              letterBadgeStyle = "bg-slate-100 text-slate-400 border-slate-200";
+            }
+          } else {
+            // Exam Simulation Mode (Locked Selection, No Reveal)
+            if (idx === selectedOptionIndex) {
+              styleClasses = "border-blue-600 bg-blue-50/70 text-blue-950 font-semibold ring-1 ring-blue-600";
+              letterBadgeStyle = "bg-blue-600 text-white border-blue-600";
+            } else {
+              styleClasses = "border-slate-200 bg-white text-slate-600";
+            }
+          }
+        }
+
+        return `
+          <button onclick="handleOptionSelect(${q.id}, ${idx})" 
+                  ${(hasAnswered && appMode === 'PRACTICE') ? 'disabled' : ''}
+                  class="w-full text-left p-3.5 sm:p-4 rounded-lg border text-xs sm:text-sm flex items-start gap-3 transition ${styleClasses}">
+            <span class="w-6 h-6 rounded-md flex items-center justify-center font-bold text-xs shrink-0 border ${letterBadgeStyle}">
+              ${letterPrefixes[idx] || (idx+1)}
+            </span>
+            <span class="pt-0.5 leading-relaxed">${option}</span>
+          </button>
+        `;
+      }).join('');
+
+      // Show Analysis ONLY in Practice Mode after answering
+      if (hasAnswered && appMode === 'PRACTICE' && q.analysis) {
+        document.getElementById('analysis-concept').innerText = q.analysis.concept || 'N/A';
+        document.getElementById('analysis-statutes').innerText = q.analysis.statutes || 'N/A';
+        document.getElementById('analysis-precedents').innerText = q.analysis.precedents || 'N/A';
+        document.getElementById('analysis-examtip').innerText = q.analysis.examTip || 'UPESSC Law syllabus revision note.';
+        analysisBox.classList.remove('hidden');
+      } else {
+        analysisBox.classList.add('hidden');
+      }
+
+      prevBtn.disabled = (state.currentIndex === 0);
+      nextBtn.disabled = (state.currentIndex >= activeQuestions.length - 1);
+
+      updateDrawerStats();
+      lucide.createIcons();
+    }
+
+    function handleOptionSelect(questionId, selectedIndex) {
+      if (appMode === 'PRACTICE' && state.userAnswers.hasOwnProperty(questionId)) return;
+
+      state.userAnswers[questionId] = selectedIndex;
+      saveSessionState();
+
+      const q = QUESTION_BANK.find(item => item.id === questionId);
+      if (q && appMode === 'PRACTICE') {
+        if (selectedIndex === q.correctAnswer) playBeep('correct');
+        else playBeep('wrong');
+      }
+
+      renderApp();
+
+      if (appMode === 'PRACTICE') {
+        setTimeout(() => {
+          const analysis = document.getElementById('analysis-container');
+          if (analysis && !analysis.classList.contains('hidden')) {
+            analysis.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }, 70);
+      }
+    }
+
+    function navigateQuestion(offset) {
+      const activeQuestions = getFilteredQuestions();
+      const newIndex = state.currentIndex + offset;
+      if (newIndex >= 0 && newIndex < activeQuestions.length) {
+        state.currentIndex = newIndex;
+        saveSessionState();
+        renderApp();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function executeJump() {
+      const input = document.getElementById('jump-input');
+      const val = parseInt(input.value);
+      const activeQuestions = getFilteredQuestions();
+
+      if (!isNaN(val) && val >= 1 && val <= activeQuestions.length) {
+        state.currentIndex = val - 1;
+        saveSessionState();
+        renderApp();
+        input.value = '';
+        input.blur();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert(`Enter a question number between 1 and ${activeQuestions.length}`);
+      }
+    }
+
+    /* Mode Switcher (Practice vs Mock Exam) */
+    function switchAppMode(mode) {
+      appMode = mode;
+      const practiceBtn = document.getElementById('mode-practice-btn');
+      const examBtn = document.getElementById('mode-exam-btn');
+      const headerBadge = document.getElementById('header-mode-badge');
+      const timerDisplay = document.getElementById('exam-timer-display');
+      const finishBtn = document.getElementById('header-finish-btn');
+
+      if (mode === 'EXAM') {
+        practiceBtn.className = "py-1.5 rounded font-semibold transition text-slate-400 hover:text-white";
+        examBtn.className = "py-1.5 rounded font-semibold transition bg-rose-600 text-white";
+        headerBadge.innerText = "Exam Simulation";
+        headerBadge.className = "px-1.5 py-0.2 bg-rose-100 text-rose-700 text-[10px] font-bold rounded uppercase";
+        timerDisplay.classList.remove('hidden');
+        finishBtn.classList.remove('hidden');
+        startExamTimer();
+      } else {
+        practiceBtn.className = "py-1.5 rounded font-semibold transition bg-blue-600 text-white";
+        examBtn.className = "py-1.5 rounded font-semibold transition text-slate-400 hover:text-white";
+        headerBadge.innerText = "Practice Mode";
+        headerBadge.className = "px-1.5 py-0.2 bg-blue-100 text-blue-700 text-[10px] font-bold rounded uppercase";
+        timerDisplay.classList.add('hidden');
+        finishBtn.classList.add('hidden');
+        clearInterval(examTimerInterval);
+      }
+
+      renderApp();
+    }
+
+    function startExamTimer() {
+      clearInterval(examTimerInterval);
+      examTimeSeconds = 7200; // 2 hours
+      examTimerInterval = setInterval(() => {
+        if (examTimeSeconds <= 0) {
+          clearInterval(examTimerInterval);
+          submitMockExam();
+          return;
+        }
+        examTimeSeconds--;
+        const mins = Math.floor(examTimeSeconds / 60);
+        const secs = examTimeSeconds % 60;
+        document.getElementById('exam-timer-display').innerText = 
+          `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function submitMockExam() {
+      clearInterval(examTimerInterval);
+      const totalQuestions = QUESTION_BANK.length;
+      let attempted = 0;
+      let correct = 0;
+      let incorrect = 0;
+
+      QUESTION_BANK.forEach(q => {
+        if (state.userAnswers.hasOwnProperty(q.id)) {
+          attempted++;
+          if (state.userAnswers[q.id] === q.correctAnswer) correct++;
+          else incorrect++;
+        }
+      });
+
+      // UPESSC Standard: 2 marks per question, 1/3 negative marking (-0.66)
+      const positiveScore = correct * 2;
+      const negativeDeduction = (incorrect * (2 / 3));
+      const netScore = Math.max(0, (positiveScore - negativeDeduction)).toFixed(2);
+      const accuracy = attempted > 0 ? ((correct / attempted) * 100).toFixed(1) : 0;
+
+      const content = document.getElementById('scorecard-content');
+      content.innerHTML = `
+        <div class="grid grid-cols-2 gap-3 text-center">
+          <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+            <span class="text-xs text-blue-700 font-medium block">Net Score</span>
+            <span class="text-2xl font-black text-blue-950">${netScore}</span>
+            <span class="text-[10px] text-blue-600 block">Marks (Max ${totalQuestions * 2})</span>
+          </div>
+          <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+            <span class="text-xs text-emerald-700 font-medium block">Accuracy</span>
+            <span class="text-2xl font-black text-emerald-950">${accuracy}%</span>
+            <span class="text-[10px] text-emerald-600 block">${correct} of ${attempted} attempted</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-2 text-xs">
+          <div class="flex justify-between"><span>Total Syllabus Pool:</span><b>${totalQuestions}</b></div>
+          <div class="flex justify-between text-emerald-700"><span>Correct Answers (+2 each):</span><b>+${correct}</b></div>
+          <div class="flex justify-between text-rose-700"><span>Incorrect Answers (-0.66 each):</span><b>-${incorrect}</b></div>
+          <div class="flex justify-between text-slate-500"><span>Unattempted Questions:</span><b>${totalQuestions - attempted}</b></div>
+        </div>
+
+        <p class="text-[11px] text-slate-500 italic text-center">
+          Switch back to Practice Mode at any time to review full case-law rationes for every question.
+        </p>
+      `;
+
+      document.getElementById('scorecard-modal').classList.remove('hidden');
+      document.getElementById('scorecard-modal').classList.add('flex');
+    }
+
+    function closeScorecard() {
+      const modal = document.getElementById('scorecard-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    /* 10-Unit Syllabus Diagnostic Matrix */
+    function openDiagnosticMatrix() {
+      const modal = document.getElementById('matrix-modal');
+      const content = document.getElementById('matrix-content');
+      
+      const unitsList = [
+        { code: "UNIT-I", title: "Constitutional & Administrative Law" },
+        { code: "UNIT-II", title: "Jurisprudence & Legal Theory" },
+        { code: "UNIT-III", title: "Law of Crimes & IPC" },
+        { code: "UNIT-IV", title: "Law of Torts & Consumer Protection" },
+        { code: "UNIT-V", title: "Public International Law & IHL" },
+        { code: "UNIT-VI", title: "Commercial Law (Contracts, Companies)" },
+        { code: "UNIT-VII", title: "Family Law (Personal Laws, UCC)" },
+        { code: "UNIT-VIII", title: "Environment & Human Rights Law" },
+        { code: "UNIT-IX", title: "Intellectual Property & Cyber Law" },
+        { code: "UNIT-X", title: "Comparative Public Law & Governance" }
+      ];
+
+      content.innerHTML = unitsList.map(u => {
+        const unitQuestions = QUESTION_BANK.filter(q => q.unit === u.code);
+        const total = unitQuestions.length;
+        let attempted = 0;
+        let correct = 0;
+
+        unitQuestions.forEach(q => {
+          if (state.userAnswers.hasOwnProperty(q.id)) {
+            attempted++;
+            if (state.userAnswers[q.id] === q.correctAnswer) correct++;
+          }
+        });
+
+        const acc = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+
+        return `
+          <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-bold text-slate-800">${u.code}: ${u.title}</span>
+              <span class="font-bold ${acc >= 70 ? 'text-emerald-600' : acc >= 40 ? 'text-amber-600' : 'text-slate-400'}">${acc}%</span>
+            </div>
+            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-1.5">
+              <div class="h-full ${acc >= 70 ? 'bg-emerald-500' : acc >= 40 ? 'bg-amber-500' : 'bg-slate-300'}" style="width: ${acc}%"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-500">
+              <span>Available in Bank: <b>${total}</b></span>
+              <span>Attempted: <b>${attempted}/${total}</b></span>
+              <span>Correct: <b>${correct}</b></span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeDiagnosticMatrix() {
+      const modal = document.getElementById('matrix-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    /* Search & Filter Handlers */
+    let searchDebounceTimer = null;
+    function handleSearch(val) {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        state.searchQuery = val.trim();
+        state.currentIndex = 0;
+        document.getElementById('search-clear-btn').classList.toggle('hidden', !state.searchQuery);
+        renderApp();
+      }, 150);
+    }
+
+    function clearSearch() {
+      document.getElementById('search-input').value = '';
+      state.searchQuery = '';
+      document.getElementById('search-clear-btn').classList.add('hidden');
+      renderApp();
+    }
+
+    function handleUnitFilterChange(unitVal) {
+      state.onlyBookmarks = false;
+      state.selectedUnit = unitVal;
+      state.currentIndex = 0;
+      saveSessionState();
+      renderApp();
+    }
+
+    function handlePYQToggle(isChecked) {
+      state.pyqsOnly = isChecked;
+      state.currentIndex = 0;
+      saveSessionState();
+      renderApp();
+    }
+
+    function setFilterMode(mode) {
+      state.onlyBookmarks = false;
+      state.selectedUnit = mode;
+      state.currentIndex = 0;
+      saveSessionState();
+      renderApp();
+    }
+
+    function toggleBookmarkOnlyFilter() {
+      if (state.bookmarks.length === 0) {
+        alert("You have not bookmarked any questions yet.");
+        return;
+      }
+      state.onlyBookmarks = !state.onlyBookmarks;
+      state.currentIndex = 0;
+      saveSessionState();
+      renderApp();
+    }
+
+    function toggleBookmarkCurrent() {
+      const activeQuestions = getFilteredQuestions();
+      if (!activeQuestions[state.currentIndex]) return;
+      
+      const qId = activeQuestions[state.currentIndex].id;
+      const idx = state.bookmarks.indexOf(qId);
+      if (idx > -1) state.bookmarks.splice(idx, 1);
+      else state.bookmarks.push(qId);
+
+      saveSessionState();
+      renderApp();
+    }
+
+    /* Drawer Actions */
+    function openDrawer() {
+      const drawer = document.getElementById('sidebar-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      drawer.classList.remove('-translate-x-full');
+      backdrop.classList.remove('hidden');
+      setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeDrawer() {
+      const drawer = document.getElementById('sidebar-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      drawer.classList.add('-translate-x-full');
+      backdrop.classList.add('opacity-0');
+      setTimeout(() => backdrop.classList.add('hidden'), 250);
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    /* Palette Modal */
+    const PALETTE_PAGE_SIZE = 50;
+    function openPalette() {
+      const modal = document.getElementById('palette-modal');
+      const select = document.getElementById('palette-range-select');
+      const activeQuestions = getFilteredQuestions();
+
+      const totalChunks = Math.ceil(activeQuestions.length / PALETTE_PAGE_SIZE);
+      select.innerHTML = '';
+
+      for (let i = 0; i < totalChunks; i++) {
+        const start = i * PALETTE_PAGE_SIZE + 1;
+        const end = Math.min((i + 1) * PALETTE_PAGE_SIZE, activeQuestions.length);
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.innerText = `Questions ${start} - ${end}`;
+        select.appendChild(opt);
+      }
+
+      const currentChunk = Math.floor(state.currentIndex / PALETTE_PAGE_SIZE);
+      select.value = currentChunk;
+      renderPaletteGrid(currentChunk);
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function renderPaletteGrid(chunkIndex) {
+      const grid = document.getElementById('palette-grid');
+      const activeQuestions = getFilteredQuestions();
+      const start = chunkIndex * PALETTE_PAGE_SIZE;
+      const end = Math.min(start + PALETTE_PAGE_SIZE, activeQuestions.length);
+      const items = activeQuestions.slice(start, end);
+
+      grid.innerHTML = items.map((q, localIdx) => {
+        const globalIdx = start + localIdx;
+        let btnStyle = "bg-slate-100 text-slate-700 border-slate-300";
+        if (state.userAnswers.hasOwnProperty(q.id)) {
+          if (appMode === 'PRACTICE') {
+            if (state.userAnswers[q.id] === q.correctAnswer) {
+              btnStyle = "bg-emerald-500 text-white border-emerald-600 font-bold";
+            } else {
+              btnStyle = "bg-rose-500 text-white border-rose-600 font-bold";
+            }
+          } else {
+            btnStyle = "bg-blue-600 text-white border-blue-700 font-bold";
+          }
+        }
+        const isCurrent = (globalIdx === state.currentIndex);
+        return `
+          <button onclick="jumpToQuestion(${globalIdx})" 
+                  class="p-2 rounded-md border text-xs font-semibold transition ${btnStyle} ${isCurrent ? 'ring-2 ring-blue-600 ring-offset-1' : ''}">
+            ${globalIdx + 1}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function closePalette() {
+      const modal = document.getElementById('palette-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    function jumpToQuestion(idx) {
+      state.currentIndex = idx;
+      saveSessionState();
+      closePalette();
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* JSON Importer / Exporter Engine (IndexedDB Backed) */
+    function openJsonModal() {
+      const modal = document.getElementById('json-modal');
+      const feedback = document.getElementById('json-feedback');
+      feedback.classList.add('hidden');
+      document.getElementById('json-input').value = '';
+      document.getElementById('json-file-input').value = '';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeJsonModal() {
+      const modal = document.getElementById('json-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        document.getElementById('json-input').value = event.target.result;
+      };
+      reader.readAsText(file);
+    }
+
+    function insertSampleJson() {
+      const sample = [
+        {
+          "id": QUESTION_BANK.length + 1,
+          "unit": "UNIT-I",
+          "unitName": "Constitutional & Administrative Law",
+          "isPYQ": true,
+          "pyqYear": "2023",
+          "question": "Which Article of the Constitution confers power on the High Courts to issue writs for the enforcement of fundamental rights and for any other purpose?",
+          "options": [
+            "Article 32",
+            "Article 226",
+            "Article 136",
+            "Article 227"
+          ],
+          "correctAnswer": 1,
+          "analysis": {
+            "concept": "Article 226 provides plenary writ jurisdiction to High Courts, which is wider than Article 32 as it extends to 'any other purpose'.",
+            "statutes": "Article 226 of the Constitution of India.",
+            "precedents": "L. Chandra Kumar v. Union of India (1997); Bandhua Mukti Morcha (1984).",
+            "examTip": "Article 226 is not a fundamental right in itself, unlike Article 32."
+          }
+        }
+      ];
+      document.getElementById('json-input').value = JSON.stringify(sample, null, 2);
+    }
+
+    async function importJsonData() {
+      const raw = document.getElementById('json-input').value.trim();
+      const feedback = document.getElementById('json-feedback');
+
+      if (!raw) {
+        feedback.className = "p-2.5 rounded text-xs bg-rose-100 text-rose-800 font-semibold";
+        feedback.innerText = "Please paste JSON or choose a file first.";
+        feedback.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        let parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) parsed = [parsed];
+
+        let maxId = 0;
+        for (let i = 0; i < QUESTION_BANK.length; i++) {
+          if (QUESTION_BANK[i].id > maxId) maxId = QUESTION_BANK[i].id;
+        }
+
+        const validBatch = [];
+        parsed.forEach(item => {
+          if (item.question && Array.isArray(item.options) && typeof item.correctAnswer === 'number') {
+            maxId++;
+            validBatch.push({
+              id: item.id || maxId,
+              unit: item.unit || "UNIT-I",
+              unitName: item.unitName || "Law",
+              isPYQ: !!item.isPYQ,
+              pyqYear: item.pyqYear || null,
+              question: item.question,
+              options: item.options,
+              correctAnswer: item.correctAnswer,
+              analysis: item.analysis || {
+                concept: "FreeFellow syllabus analysis.",
+                statutes: "Applicable statutory provisions.",
+                precedents: "Landmark case precedents.",
+                examTip: "UPESSC exam revision tip."
+              }
+            });
+          }
+        });
+
+        if (validBatch.length === 0) throw new Error("No questions conformed to schema.");
+
+        // Asynchronously save to IndexedDB
+        await dbBulkSaveQuestions(validBatch);
+        QUESTION_BANK = await dbGetAllQuestions();
+        renderApp();
+
+        feedback.className = "p-2.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold";
+        feedback.innerText = `Successfully imported ${validBatch.length} questions into IndexedDB! Total Bank: ${QUESTION_BANK.length}`;
+        feedback.classList.remove('hidden');
+
+        setTimeout(() => closeJsonModal(), 1200);
+
+      } catch (err) {
+        feedback.className = "p-2.5 rounded text-xs bg-rose-100 text-rose-800 font-semibold";
+        feedback.innerText = `Import Error: ${err.message}`;
+        feedback.classList.remove('hidden');
+      }
+    }
+
+    function exportQuestionsJson() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(QUESTION_BANK, null, 2));
+      const anchor = document.createElement('a');
+      anchor.setAttribute("href", dataStr);
+      anchor.setAttribute("download", `upessc_law_subject64_${QUESTION_BANK.length}_questions.json`);
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+    }
+
+    /* Accuracy & Persistence Helpers */
+    function updateDrawerStats() {
+      const totalAnswered = Object.keys(state.userAnswers).length;
+      let totalCorrect = 0;
+
+      QUESTION_BANK.forEach(q => {
+        if (state.userAnswers[q.id] === q.correctAnswer) totalCorrect++;
+      });
+
+      const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+
+      document.getElementById('drawer-attempted').innerText = totalAnswered;
+      document.getElementById('drawer-accuracy').innerText = `${accuracy}%`;
+      document.getElementById('drawer-accuracy-bar').style.width = `${accuracy}%`;
+    }
+
+    async function saveSessionState() {
+      await dbSetMetadata('session_state', state);
+    }
+
+    async function confirmReset() {
+      if (confirm("Reset current scores and bookmarks? (Your IndexedDB question bank will remain intact)")) {
+        state = {
+          selectedUnit: 'ALL',
+          pyqsOnly: false,
+          onlyBookmarks: false,
+          searchQuery: '',
+          currentIndex: 0,
+          userAnswers: {},
+          bookmarks: []
+        };
+        await saveSessionState();
+        closeDrawer();
+        renderApp();
+      }
+    }
+
+    /* Touch Gesture Listeners (Swipe Left/Right on Question Surface) */
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const surface = document.getElementById('swipe-surface');
+
+    surface.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    surface.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+        if (diffX < 0) navigateQuestion(1);
+        else navigateQuestion(-1);
+      }
+    }, { passive: true });
+
+    /* Initialize Application Engine on Page Load */
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await openDatabase();
+        let storedQuestions = await dbGetAllQuestions();
+        
+        // Auto-seed if database is new or empty
+        if (!storedQuestions || storedQuestions.length === 0) {
+          await dbBulkSaveQuestions(MASTER_SEED_QUESTIONS);
+          storedQuestions = await dbGetAllQuestions();
+        }
+
+        QUESTION_BANK = storedQuestions;
+
+        const savedState = await dbGetMetadata('session_state');
+        if (savedState) state = { ...state, ...savedState };
+
+        renderApp();
+      } catch (err) {
+        console.error("Initialization error:", err);
+      }
+    });
+  </script>
+</body>
+</html>
