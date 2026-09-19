@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>UPESSC Prayagraj | Law (Subject 64) Portal</title>
+  
+  <!-- Inter & Merriweather Typography (FreeFellow Aesthetic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Merriweather', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    .safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .drawer-transition {
+      transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body class="bg-[#f8fafc] text-slate-800 font-sans antialiased select-none lg:select-auto">
+
+  <!-- SCRIM BACKDROP FOR MOBILE DRAWER -->
+  <div id="drawer-backdrop" 
+       onclick="closeDrawer()" 
+       class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 hidden transition-opacity duration-300 opacity-0 lg:hidden">
+  </div>
+
+  <div class="flex min-h-screen">
+    
+    <!-- SIDEBAR DRAWER (Hidden on mobile, slides in via Hamburger Button) -->
+    <aside id="sidebar-drawer" 
+           class="fixed lg:static top-0 bottom-0 left-0 z-50 w-72 bg-[#0c1322] text-white flex flex-col justify-between drawer-transition -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none shrink-0">
+      
+      <div class="p-5 safe-top overflow-y-auto">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-[10px] tracking-wider uppercase font-semibold text-blue-400">UPESSC PRAYAGRAJ</span>
+            <h1 class="text-base font-bold text-slate-100 flex items-center gap-1.5 mt-0.5">
+              Law (Subject 64)
+            </h1>
+            <p class="text-[11px] text-slate-400">Assistant Professor Portal</p>
+          </div>
+          <button onclick="closeDrawer()" 
+                  class="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-md hover:bg-slate-800 focus:outline-none"
+                  aria-label="Close menu">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="mt-5 space-y-1.5">
+          <a href="#" onclick="setFilterMode('ALL'); closeDrawer();" 
+             id="nav-all"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-600 text-white font-medium text-sm transition shadow-xs">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span>Full Syllabus Practice</span>
+          </a>
+
+          <a href="#" onclick="openJsonModal(); closeDrawer();" 
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-emerald-400 hover:bg-slate-800 hover:text-emerald-300 text-sm font-medium transition border border-emerald-500/20 bg-emerald-950/20">
+            <i data-lucide="file-json" class="w-4 h-4"></i>
+            <span>Import Questions (JSON)</span>
+          </a>
+
+          <a href="#" onclick="openPalette(); closeDrawer();" 
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white text-sm transition">
+            <i data-lucide="grid-3x3" class="w-4 h-4"></i>
+            <span>Question Palette</span>
+          </a>
+
+          <a href="#" onclick="toggleBookmarkOnlyFilter(); closeDrawer();" 
+             id="nav-bookmarks"
+             class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white text-sm transition">
+            <div class="flex items-center gap-3">
+              <i data-lucide="bookmark" class="w-4 h-4 text-amber-400"></i>
+              <span>Bookmarked Qs</span>
+            </div>
+            <span id="drawer-bookmarks-count" class="text-xs bg-slate-800 text-amber-300 px-2 py-0.5 rounded-full font-bold">0</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Bottom Session Stats & Actions -->
+      <div class="p-4 border-t border-slate-800 bg-[#080d17] safe-bottom">
+        <div class="bg-slate-800/80 rounded-lg p-3 text-xs mb-3 border border-slate-700/60">
+          <div class="flex justify-between items-center text-slate-400 mb-1">
+            <span>Accuracy Rate</span>
+            <span id="drawer-accuracy" class="font-bold text-emerald-400">0%</span>
+          </div>
+          <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+            <div id="drawer-accuracy-bar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400 mt-2">
+            <span>Question Pool: <b id="drawer-total-qs" class="text-white">10</b></span>
+            <span>Attempted: <b id="drawer-attempted" class="text-blue-400">0</b></span>
+          </div>
+        </div>
+
+        <button onclick="confirmReset()" 
+                class="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 hover:text-red-400 hover:bg-red-950/30 rounded-md transition">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          <span>Reset Session Data</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN INTERFACE -->
+    <div class="flex-1 flex flex-col min-w-0">
+
+      <!-- Sticky Header -->
+      <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 py-3 safe-top">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+          
+          <div class="flex items-center gap-3">
+            <button onclick="openDrawer()" 
+                    class="p-2 -ml-1 text-slate-700 hover:text-blue-600 hover:bg-slate-100 rounded-lg lg:hidden active:scale-95 transition"
+                    aria-label="Toggle navigation drawer">
+              <i data-lucide="menu" class="w-6 h-6 stroke-[2.2]"></i>
+            </button>
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-wider text-blue-600 lg:hidden">UPESSC Subject 64</div>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight leading-tight">Unit-wise Practice</h2>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2">
+            <button onclick="openJsonModal()" 
+                    class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-md transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Add JSON</span>
+            </button>
+
+            <button onclick="openPalette()" 
+                    class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition">
+              <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+              <span>Q: <span id="header-q-index">1</span>/<span id="header-q-total">10</span></span>
+            </button>
+
+            <button onclick="toggleBookmarkCurrent()" 
+                    id="header-bookmark-btn" 
+                    class="p-1.5 text-slate-400 hover:text-amber-500 rounded-md transition" 
+                    title="Bookmark Question">
+              <i data-lucide="bookmark" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Practice Content -->
+      <main class="flex-1 p-3 sm:p-6 max-w-4xl w-full mx-auto" id="swipe-surface">
+        
+        <!-- Filter & Jump Bar -->
+        <section class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-xs mb-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            
+            <!-- All 10 Units of Official UPESSC Subject 64 Syllabus -->
+            <div class="flex-1">
+              <label for="unit-filter" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                Filter Syllabus Unit (10 Units Total)
+              </label>
+              <select id="unit-filter" 
+                      onchange="handleUnitFilterChange(this.value)" 
+                      class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-lg p-2.5 font-medium outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="ALL">All 10 Units (Full Law Syllabus)</option>
+                <option value="UNIT-I">Unit-I: Constitutional & Administrative Law</option>
+                <option value="UNIT-II">Unit-II: Jurisprudence & Legal Theory</option>
+                <option value="UNIT-III">Unit-III: Law of Crimes & IPC</option>
+                <option value="UNIT-IV">Unit-IV: Law of Torts & Consumer Protection</option>
+                <option value="UNIT-V">Unit-V: Public International Law & IHL</option>
+                <option value="UNIT-VI">Unit-VI: Commercial Law (Contracts, Partnership, Companies)</option>
+                <option value="UNIT-VII">Unit-VII: Family Law (Hindu, Muslim, Succession, UCC)</option>
+                <option value="UNIT-VIII">Unit-VIII: Environment & Human Rights Law</option>
+                <option value="UNIT-IX">Unit-IX: Intellectual Property & Cyber/IT Law</option>
+                <option value="UNIT-X">Unit-X: Comparative Public Law & Governance</option>
+              </select>
+            </div>
+
+            <!-- Toggles & Fast Jump -->
+            <div class="flex items-center justify-between sm:justify-start gap-4 pt-1 sm:pt-4">
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="pyq-checkbox" onchange="handlePYQToggle(this.checked)" class="sr-only peer">
+                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                <span class="ml-2 text-xs font-semibold text-slate-700">PYQs Only</span>
+              </label>
+
+              <!-- Fast Direct Number Jump with Soft Keyboard Dismissal -->
+              <div class="flex items-center gap-1">
+                <span class="text-xs text-slate-500 font-medium">Jump:</span>
+                <input type="number" 
+                       id="jump-input" 
+                       placeholder="No." 
+                       min="1" 
+                       onkeydown="if(event.key==='Enter') executeJump()" 
+                       class="w-14 bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs text-center font-bold focus:ring-1 focus:ring-blue-500 outline-none" />
+                <button onclick="executeJump()" class="p-1 text-xs bg-slate-200 hover:bg-slate-300 rounded text-slate-700 font-semibold px-2">Go</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Active Filter Indicator Pill (If Bookmarks Active) -->
+        <div id="filter-status-banner" class="hidden mb-3 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg flex items-center justify-between text-xs text-amber-900">
+          <span>Currently reviewing <b>Saved Bookmarks</b> only</span>
+          <button onclick="setFilterMode('ALL')" class="font-bold underline text-amber-950">Show Full Bank</button>
+        </div>
+
+        <!-- Question Card (FreeFellow Academic Style) -->
+        <article id="question-card" class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden mb-5">
+          
+          <div class="px-4 py-3 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span id="q-unit-badge" class="font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded text-[11px] uppercase tracking-wide">
+                UNIT-I · CONSTITUTIONAL LAW
+              </span>
+              <span id="q-pyq-badge" class="font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[10px]">
+                PYQ 2021
+              </span>
+            </div>
+            <span id="q-number-pill" class="text-slate-500 font-semibold">Q. 1</span>
+          </div>
+
+          <div class="p-4 sm:p-6">
+            <h3 id="q-text" class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed font-serif">
+              Loading question...
+            </h3>
+
+            <div id="options-container" class="mt-5 space-y-2.5">
+              <!-- Rendered options -->
+            </div>
+          </div>
+
+          <!-- FreeFellow Case Law & Ratio Decidendi Breakdown -->
+          <section id="analysis-container" class="hidden border-t border-slate-200 bg-slate-50/90 p-4 sm:p-6 transition-all duration-300">
+            <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3">
+              <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+              <span>FreeFellow Academic Analysis & Case Law</span>
+            </div>
+
+            <div class="space-y-3.5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+              <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
+                <h4 class="font-semibold text-blue-900 uppercase tracking-wider text-[11px] mb-1">Concept Tested</h4>
+                <p id="analysis-concept" class="text-slate-800"></p>
+              </div>
+
+              <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
+                <h4 class="font-semibold text-blue-900 uppercase tracking-wider text-[11px] mb-1">Constitutional / Statutory Grounding</h4>
+                <p id="analysis-statutes" class="text-slate-800"></p>
+              </div>
+
+              <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs">
+                <h4 class="font-semibold text-blue-900 uppercase tracking-wider text-[11px] mb-1">Landmark Precedents & Ratio Decidendi</h4>
+                <p id="analysis-precedents" class="text-slate-800 italic"></p>
+              </div>
+
+              <div class="bg-amber-50/80 border border-amber-200 p-3 rounded-lg text-amber-900">
+                <strong class="text-amber-950 font-bold block mb-0.5 text-[11px] uppercase">UPESSC Exam Tip:</strong>
+                <span id="analysis-examtip"></span>
+              </div>
+            </div>
+          </section>
+        </article>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between gap-3 pb-8 safe-bottom">
+          <button id="prev-btn" 
+                  onclick="navigateQuestion(-1)" 
+                  class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-white border border-slate-300 font-medium text-slate-700 text-sm hover:bg-slate-50 active:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed shadow-xs transition">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            <span>Previous</span>
+          </button>
+
+          <button id="next-btn" 
+                  onclick="navigateQuestion(1)" 
+                  class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 font-semibold text-white text-sm hover:bg-blue-700 active:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed shadow-xs transition">
+            <span>Next</span>
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- QUESTION PALETTE MODAL (Fast Paginated Range for up to 5,000 Questions) -->
+  <div id="palette-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+      <div class="px-5 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-slate-800 text-sm sm:text-base">Question Palette</h3>
+        <button onclick="closePalette()" class="p-1 text-slate-400 hover:text-slate-700 rounded-md">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between gap-2 text-xs">
+        <span class="text-slate-500 font-medium">Page Range:</span>
+        <select id="palette-range-select" onchange="renderPaletteGrid(parseInt(this.value))" class="bg-white border border-slate-300 rounded px-2 py-1 font-semibold text-slate-700 outline-none">
+          <!-- Dynamically populated page ranges -->
+        </select>
+      </div>
+
+      <div class="p-4 flex-1 overflow-y-auto">
+        <div class="flex items-center justify-around text-xs text-slate-600 mb-3 pb-2 border-b border-slate-100">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Correct</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Wrong</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> Unattempted</span>
+        </div>
+        <div id="palette-grid" class="grid grid-cols-5 gap-2 text-center"></div>
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-100 text-right">
+        <button onclick="closePalette()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-100">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSON IMPORTER MODAL (Supports Direct File Upload & Paste) -->
+  <div id="json-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-json" class="w-5 h-5 text-emerald-400"></i>
+          <h3 class="font-bold text-sm sm:text-base">Import Question Bank (JSON)</h3>
+        </div>
+        <button onclick="closeJsonModal()" class="p-1 text-slate-400 hover:text-white rounded-md">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-5 flex-1 overflow-y-auto space-y-3">
+        <!-- Direct File Upload for Mobile / Desktop -->
+        <div class="bg-slate-50 p-3 rounded-lg border border-dashed border-slate-300 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-slate-800 block">Select JSON File from Device:</span>
+            <span class="text-[11px] text-slate-500">Ideal for importing files with 1,000 to 5,000 questions</span>
+          </div>
+          <input type="file" id="json-file-input" accept=".json" onchange="handleFileUpload(event)" class="text-xs max-w-[170px]" />
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <span class="text-xs text-slate-600 font-medium">Or Paste JSON Data:</span>
+          <button onclick="insertSampleJson()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 underline">
+            Load Sample Template
+          </button>
+        </div>
+
+        <textarea id="json-input" 
+                  rows="7" 
+                  placeholder='[{"id": 11, "unit": "UNIT-I", "unitName": "Constitutional Law", "isPYQ": true, "pyqYear": "2023", "question": "...", "options": ["A", "B", "C", "D"], "correctAnswer": 0, "analysis": { "concept": "...", "statutes": "...", "precedents": "...", "examTip": "..." }}]'
+                  class="w-full font-mono text-xs p-3 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+        
+        <div id="json-feedback" class="hidden p-2.5 rounded text-xs font-medium"></div>
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2">
+        <button onclick="exportQuestionsJson()" class="px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-100 flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Export All JSON</span>
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button onclick="closeJsonModal()" class="px-3 py-2 text-xs text-slate-600 font-medium hover:bg-slate-100 rounded">
+            Cancel
+          </button>
+          <button onclick="importJsonData()" class="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded shadow-xs flex items-center gap-1.5">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span>Import & Save</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT ENGINE -->
+  <script>
+    /* ============================================================
+       MASTER SEED QUESTIONS (Covers ALL 10 Units of Subject 64)
+       ============================================================ */
+    const MASTER_SEED_QUESTIONS = [
+      {
+        id: 1,
+        unit: "UNIT-I",
+        unitName: "Constitutional & Administrative Law",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "The doctrine of 'Pith and Substance' is primarily applied to resolve conflicts regarding which of the following provisions of the Constitution of India?",
+        options: [
+          "Distribution of legislative powers under Article 246 and Seventh Schedule",
+          "Pre-constitutional laws inconsistent with Fundamental Rights under Article 13(1)",
+          "Administrative directions issued by Union to States under Article 256",
+          "Special power of Parliament to amend the Constitution under Article 368"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "The doctrine examines the true nature, character, and primary substance of an enactment to ascertain legislative competence when an incidental encroachment occurs between Union and State lists.",
+          statutes: "Article 246 read with the Seventh Schedule (Union, State, and Concurrent Lists).",
+          precedents: "Prafulla Kumar Mukherjee v. Bank of Commerce (1947 PC); State of Bombay v. F.N. Balsara (1951 SC); State of Rajasthan v. G. Chawla (1959 SC).",
+          examTip: "Incidental encroachment onto another list does not invalidate legislation provided its primary pith and substance falls within the competent legislature's list."
+        }
+      },
+      {
+        id: 2,
+        unit: "UNIT-II",
+        unitName: "Jurisprudence & Legal Theory",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "Who among the following legal philosophers expounded the concept of Law as a 'Union of Primary and Secondary Rules'?",
+        options: [
+          "John Austin",
+          "H.L.A. Hart",
+          "Hans Kelsen",
+          "Roscoe Pound"
+        ],
+        correctAnswer: 1,
+        analysis: {
+          concept: "H.L.A. Hart in 'The Concept of Law' (1961) defined a municipal legal system as the union of primary rules of obligation and secondary rules of recognition, change, and adjudication.",
+          statutes: "Modern Analytical Positivism.",
+          precedents: "Critique of Austin's command-and-sanction model of jurisprudence.",
+          examTip: "Hart recognized the 'Rule of Recognition' as the foundational criterion validating all other rules within a legal order."
+        }
+      },
+      {
+        id: 3,
+        unit: "UNIT-III",
+        unitName: "Law of Crimes & IPC",
+        isPYQ: true,
+        pyqYear: "2018",
+        question: "Under Section 84 of the Indian Penal Code (IPC), the standard of mental incapacity required to establish a valid defense is:",
+        options: [
+          "Medical insanity diagnosed prior to the occurrence",
+          "Legal insanity at the exact time of committing the act",
+          "Emotional disturbance or loss of emotional self-control",
+          "Subsequent clinical neurosis identified during judicial trial"
+        ],
+        correctAnswer: 1,
+        analysis: {
+          concept: "Section 84 IPC is rooted in the historic M'Naghten Rules (1843). The defense must prove cognitive incapacity to know the nature of the act or that it was wrong or contrary to law.",
+          statutes: "Section 84 IPC 1860; Section 105 Indian Evidence Act 1872 (Burden of proof on accused).",
+          precedents: "Surendra Mishra v. State of Jharkhand (2011); Dahyabhai Chhaganbhai Thakkar v. State of Gujarat (1964).",
+          examTip: "Every medically insane individual is not legally insane; legal insanity requires complete failure of cognitive perception at the time of crime."
+        }
+      },
+      {
+        id: 4,
+        unit: "UNIT-IV",
+        unitName: "Law of Torts & Consumer Protection",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "The principle of 'Absolute Liability' in India, which does not admit any of the exceptions available under the Rule in Rylands v. Fletcher, was established in:",
+        options: [
+          "Donoghue v. Stevenson",
+          "M.C. Mehta v. Union of India (Oleum Gas Leak Case)",
+          "Municipal Corporation of Delhi v. Subhagwanti",
+          "Rayland v. Fletcher"
+        ],
+        correctAnswer: 1,
+        analysis: {
+          concept: "The Supreme Court formulated Absolute Liability for hazardous or inherently dangerous industrial enterprises, eliminating the defences of Act of God, plaintiff's consent, or sabotage.",
+          statutes: "Article 32 & 21 of the Indian Constitution; Tort Law jurisprudence.",
+          precedents: "M.C. Mehta v. Union of India (AIR 1987 SC 1086); Union Carbide Corporation v. Union of India (1991).",
+          examTip: "Absolute Liability applies strictly to hazardous enterprises without any of the 5 exceptions found in Rylands v. Fletcher (1868)."
+        }
+      },
+      {
+        id: 5,
+        unit: "UNIT-V",
+        unitName: "Public International Law & IHL",
+        isPYQ: false,
+        pyqYear: null,
+        question: "According to Article 38(1) of the Statute of the International Court of Justice (ICJ), which of the following is considered a 'subsidiary means' for the determination of rules of law?",
+        options: [
+          "International conventions establishing rules expressly recognized",
+          "International custom, as evidence of a general practice accepted as law",
+          "Judicial decisions and the teachings of the most highly qualified publicists",
+          "General principles of law recognized by civilized nations"
+        ],
+        correctAnswer: 2,
+        analysis: {
+          concept: "Article 38(1) classifies sources into primary sources (treaties, customs, general principles) and subsidiary means (judicial decisions and juristic writings).",
+          statutes: "Article 38(1)(d) of the Statute of the International Court of Justice.",
+          precedents: "North Sea Continental Shelf Cases (1969 ICJ); Nicaragua v. United States (1986 ICJ).",
+          examTip: "Note that judicial decisions under Article 59 of ICJ Statute have no binding force except between the parties; there is no doctrine of stare decisis."
+        }
+      },
+      {
+        id: 6,
+        unit: "UNIT-VI",
+        unitName: "Commercial Law",
+        isPYQ: true,
+        pyqYear: "2019",
+        question: "Under the Indian Contract Act, 1872, an agreement without consideration is void under Section 25, EXCEPT when it is:",
+        options: [
+          "Made out of natural love and affection between parties in close relation, expressed in writing and registered",
+          "An oral promise made before respectable community witnesses",
+          "Made between commercial entities possessing existing bank guarantees",
+          "Entered into under conditional performance covenants"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "Section 25 provides 3 exceptions to the rule 'ex nudo pacto non oritur actio': (1) natural love and affection in writing & registered; (2) compensation for past voluntary service; (3) promise to pay a time-barred debt.",
+          statutes: "Section 25(1), (2), (3) of the Indian Contract Act, 1872.",
+          precedents: "Rajlukhy Dabee v. Bhootnath Mookerjee (1900); Durga Prasad v. Baldeo (1880).",
+          examTip: "Near relation does not necessarily imply natural love and affection; both elements along with registration are mandatory under Sec. 25(1)."
+        }
+      },
+      {
+        id: 7,
+        unit: "UNIT-VII",
+        unitName: "Family Law",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "Under Section 6 of the Hindu Succession Act, 1956 (as amended by the Amendment Act of 2005), a daughter of a coparcener:",
+        options: [
+          "Acquires coparcenary rights only if her father was alive on September 9, 2005",
+          "Becomes a coparcener by birth in her own right in the same manner as a son",
+          "Possesses only limited rights of maintenance without coparcenary status",
+          "Can claim partition only with the consent of all surviving male coparceners"
+        ],
+        correctAnswer: 1,
+        analysis: {
+          concept: "The 2005 amendment conferred equal coparcenary rights upon daughters by birth, extinguishing gender discrimination in Mitakshara coparcenary property.",
+          statutes: "Section 6 of the Hindu Succession Act, 1956; Hindu Succession (Amendment) Act 2005.",
+          precedents: "Vineeta Sharma v. Rakesh Sharma (2020 9 SCC 1); Prakash v. Phulavati (overruled).",
+          examTip: "In Vineeta Sharma, a 3-judge bench clarified that the daughter's right is by birth and the father need not have been alive on September 9, 2005."
+        }
+      },
+      {
+        id: 8,
+        unit: "UNIT-VIII",
+        unitName: "Environment & Human Rights Law",
+        isPYQ: false,
+        pyqYear: null,
+        question: "The 'Precautionary Principle' and 'Polluter Pays Principle' were explicitly declared as essential features of sustainable development and part of the law of the land in:",
+        options: [
+          "Vellore Citizens' Welfare Forum v. Union of India",
+          "Subhash Kumar v. State of Bihar",
+          "Rural Litigation and Entitlement Kendra, Dehradun v. State of U.P.",
+          "Sachidanand Pandey v. State of West Bengal"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "The Supreme Court integrated international environmental jurisprudence from the Rio Declaration 1992 into Articles 21, 48A, and 51A(g) of the Constitution.",
+          statutes: "Environment (Protection) Act, 1986; Articles 21 and 48A of the Constitution of India.",
+          precedents: "Vellore Citizens' Welfare Forum v. Union of India (AIR 1996 SC 2715); Indian Council for Enviro-Legal Action (1996).",
+          examTip: "Vellore Citizens case held that the onus of proof is on the actor or developer to demonstrate that its action is environmentally benign."
+        }
+      },
+      {
+        id: 9,
+        unit: "UNIT-IX",
+        unitName: "Intellectual Property & Cyber Law",
+        isPYQ: true,
+        pyqYear: "2021",
+        question: "Under the Information Technology Act, 2000, Section 66A was struck down as unconstitutional for violating Article 19(1)(a) of the Constitution in:",
+        options: [
+          "Shreya Singhal v. Union of India",
+          "Justice K.S. Puttaswamy v. Union of India",
+          "Anuradha Bhasin v. Union of India",
+          "Navtej Singh Johar v. Union of India"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "Section 66A criminalized sending offensive messages through computer systems. The Supreme Court struck it down due to vagueness, chilling effect on free speech, and overbreadth.",
+          statutes: "Section 66A of Information Technology Act 2000; Article 19(1)(a) & 19(2) of the Constitution.",
+          precedents: "Shreya Singhal v. Union of India (AIR 2015 SC 1523).",
+          examTip: "The Court distinguished between 'discussion', 'advocacy', and 'incitement', holding that clear incitement is required to attract Article 19(2) restrictions."
+        }
+      },
+      {
+        id: 10,
+        unit: "UNIT-X",
+        unitName: "Comparative Public Law & Governance",
+        isPYQ: false,
+        pyqYear: null,
+        question: "In comparative constitutionalism, the doctrine of 'Judicial Review' of legislative enactments was first explicitly established in the United States in:",
+        options: [
+          "Marbury v. Madison (1803)",
+          "McCulloch v. Maryland (1819)",
+          "Gibbons v. Ogden (1824)",
+          "Dred Scott v. Sandford (1857)"
+        ],
+        correctAnswer: 0,
+        analysis: {
+          concept: "Chief Justice John Marshall established that an act of the legislature repugnant to the Constitution is void, cementing the power of the judiciary to invalidate unconstitutional statutes.",
+          statutes: "United States Constitution Article III; Comparative Judicial Review.",
+          precedents: "Marbury v. Madison, 5 U.S. (1 Cranch) 137 (1803); L. Chandra Kumar v. Union of India (1997) in India.",
+          examTip: "Unlike the US Constitution where judicial review was judicially inferred, the Indian Constitution explicitly provides for judicial review under Articles 13, 32, and 226."
+        }
+      }
+    ];
+
+    /* Storage Keys (Version 4 with smart migration) */
+    const STORAGE_KEY = 'UPESSC_LAW_APP_V4';
+    const QUESTION_BANK_KEY = 'UPESSC_LAW_BANK_V4';
+
+    let QUESTION_BANK = [];
+
+    /* Smart Bank Loader & Auto-Migration */
+    function loadQuestionBank() {
+      try {
+        const stored = localStorage.getItem(QUESTION_BANK_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          // Check if stored bank is missing new units from MASTER_SEED_QUESTIONS
+          const existingIds = new Set(parsed.map(q => q.id));
+          let missingFound = false;
+
+          MASTER_SEED_QUESTIONS.forEach(seedQ => {
+            if (!existingIds.has(seedQ.id)) {
+              parsed.push(seedQ);
+              missingFound = true;
+            }
+          });
+
+          QUESTION_BANK = parsed;
+          if (missingFound) saveQuestionBank();
+          return;
+        }
+      } catch (e) {
+        console.warn('Fallback to defaults', e);
+      }
+      QUESTION_BANK = [...MASTER_SEED_QUESTIONS];
+      saveQuestionBank();
+    }
+
+    function saveQuestionBank() {
+      try {
+        localStorage.setItem(QUESTION_BANK_KEY, JSON.stringify(QUESTION_BANK));
+      } catch (e) {
+        alert("Storage warning: Local storage limit reached.");
+      }
+    }
+
+    function loadSavedState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return {
+        selectedUnit: 'ALL',
+        pyqsOnly: false,
+        onlyBookmarks: false,
+        currentIndex: 0,
+        userAnswers: {},
+        bookmarks: []
+      };
+    }
+
+    let state = loadSavedState();
+
+    function persistState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    /* Sound Synthesizer */
+    function playBeep(type) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'correct') {
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        } else {
+          osc.frequency.setValueAtTime(260, ctx.currentTime);
+          osc.frequency.setValueAtTime(220, ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    /* Active Question Query Filter */
+    function getFilteredQuestions() {
+      return QUESTION_BANK.filter(q => {
+        if (state.onlyBookmarks) {
+          return state.bookmarks.includes(q.id);
+        }
+        const unitMatch = (state.selectedUnit === 'ALL' || q.unit === state.selectedUnit);
+        const pyqMatch = (!state.pyqsOnly || q.isPYQ);
+        return unitMatch && pyqMatch;
+      });
+    }
+
+    function sanitizeCurrentIndex(activeQuestions) {
+      if (activeQuestions.length === 0) {
+        state.currentIndex = 0;
+      } else if (state.currentIndex >= activeQuestions.length) {
+        state.currentIndex = activeQuestions.length - 1;
+      } else if (state.currentIndex < 0) {
+        state.currentIndex = 0;
+      }
+      persistState();
+    }
+
+    /* UI Rendering */
+    function renderApp() {
+      const activeQuestions = getFilteredQuestions();
+      sanitizeCurrentIndex(activeQuestions);
+
+      const qCard = document.getElementById('question-card');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const analysisBox = document.getElementById('analysis-container');
+      const banner = document.getElementById('filter-status-banner');
+
+      document.getElementById('unit-filter').value = state.selectedUnit;
+      document.getElementById('pyq-checkbox').checked = state.pyqsOnly;
+      document.getElementById('drawer-bookmarks-count').innerText = state.bookmarks.length;
+      document.getElementById('drawer-total-qs').innerText = QUESTION_BANK.length;
+
+      // Toggle banner
+      if (state.onlyBookmarks) {
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      // Empty states
+      if (activeQuestions.length === 0) {
+        qCard.innerHTML = `
+          <div class="p-8 text-center text-slate-500">
+            <i data-lucide="alert-circle" class="w-10 h-10 mx-auto text-amber-500 mb-2"></i>
+            <p class="font-semibold text-slate-800">No questions found in this selection.</p>
+            <p class="text-xs mt-1">Try resetting filters or click 'Add JSON' to import more questions.</p>
+            <button onclick="setFilterMode('ALL')" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md text-xs font-semibold">
+              View All 10 Units
+            </button>
+          </div>
+        `;
+        document.getElementById('header-q-index').innerText = "0";
+        document.getElementById('header-q-total').innerText = "0";
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        lucide.createIcons();
+        updateDrawerStats();
+        return;
+      }
+
+      const q = activeQuestions[state.currentIndex];
+      const hasAnswered = state.userAnswers.hasOwnProperty(q.id);
+      const selectedOptionIndex = state.userAnswers[q.id];
+
+      document.getElementById('header-q-index').innerText = state.currentIndex + 1;
+      document.getElementById('header-q-total').innerText = activeQuestions.length;
+
+      document.getElementById('q-unit-badge').innerText = `${q.unit || 'UNIT'} · ${(q.unitName || '').toUpperCase()}`;
+      const pyqBadge = document.getElementById('q-pyq-badge');
+      if (q.isPYQ) {
+        pyqBadge.innerText = `PYQ ${q.pyqYear || ''}`;
+        pyqBadge.classList.remove('hidden');
+      } else {
+        pyqBadge.classList.add('hidden');
+      }
+      document.getElementById('q-number-pill').innerText = `Q. ${state.currentIndex + 1} of ${activeQuestions.length}`;
+
+      const isBookmarked = state.bookmarks.includes(q.id);
+      const bookmarkBtn = document.getElementById('header-bookmark-btn');
+      bookmarkBtn.innerHTML = `<i data-lucide="bookmark" class="w-5 h-5 ${isBookmarked ? 'text-amber-500 fill-amber-500' : 'text-slate-400'}"></i>`;
+
+      document.getElementById('q-text').innerText = `${state.currentIndex + 1}. ${q.question}`;
+
+      const optionsContainer = document.getElementById('options-container');
+      const letterPrefixes = ['A', 'B', 'C', 'D', 'E'];
+      
+      optionsContainer.innerHTML = q.options.map((option, idx) => {
+        let styleClasses = "border-slate-200 hover:bg-slate-50 text-slate-800 bg-white";
+        let letterBadgeStyle = "bg-slate-100 text-slate-700 border-slate-300";
+
+        if (hasAnswered) {
+          if (idx === q.correctAnswer) {
+            styleClasses = "border-emerald-500 bg-emerald-50 text-emerald-950 font-medium ring-1 ring-emerald-500";
+            letterBadgeStyle = "bg-emerald-600 text-white border-emerald-600";
+          } else if (idx === selectedOptionIndex) {
+            styleClasses = "border-rose-500 bg-rose-50 text-rose-950 ring-1 ring-rose-500";
+            letterBadgeStyle = "bg-rose-600 text-white border-rose-600";
+          } else {
+            styleClasses = "border-slate-200 bg-slate-50/50 text-slate-400 opacity-60";
+            letterBadgeStyle = "bg-slate-100 text-slate-400 border-slate-200";
+          }
+        }
+
+        return `
+          <button onclick="handleOptionSelect(${q.id}, ${idx})" 
+                  ${hasAnswered ? 'disabled' : ''}
+                  class="w-full text-left p-3.5 sm:p-4 rounded-lg border text-xs sm:text-sm flex items-start gap-3 transition ${styleClasses}">
+            <span class="w-6 h-6 rounded-md flex items-center justify-center font-bold text-xs shrink-0 border ${letterBadgeStyle}">
+              ${letterPrefixes[idx] || (idx+1)}
+            </span>
+            <span class="pt-0.5 leading-relaxed">${option}</span>
+          </button>
+        `;
+      }).join('');
+
+      if (hasAnswered && q.analysis) {
+        document.getElementById('analysis-concept').innerText = q.analysis.concept || 'N/A';
+        document.getElementById('analysis-statutes').innerText = q.analysis.statutes || 'N/A';
+        document.getElementById('analysis-precedents').innerText = q.analysis.precedents || 'N/A';
+        document.getElementById('analysis-examtip').innerText = q.analysis.examTip || 'Standard UPESSC revision tip.';
+        analysisBox.classList.remove('hidden');
+      } else {
+        analysisBox.classList.add('hidden');
+      }
+
+      prevBtn.disabled = (state.currentIndex === 0);
+      nextBtn.disabled = (state.currentIndex >= activeQuestions.length - 1);
+
+      updateDrawerStats();
+      lucide.createIcons();
+    }
+
+    function handleOptionSelect(questionId, selectedIndex) {
+      if (state.userAnswers.hasOwnProperty(questionId)) return;
+
+      state.userAnswers[questionId] = selectedIndex;
+      persistState();
+
+      const q = QUESTION_BANK.find(item => item.id === questionId);
+      if (q) {
+        if (selectedIndex === q.correctAnswer) {
+          playBeep('correct');
+        } else {
+          playBeep('wrong');
+        }
+      }
+
+      renderApp();
+
+      setTimeout(() => {
+        const analysis = document.getElementById('analysis-container');
+        if (analysis && !analysis.classList.contains('hidden')) {
+          analysis.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 70);
+    }
+
+    function navigateQuestion(offset) {
+      const activeQuestions = getFilteredQuestions();
+      const newIndex = state.currentIndex + offset;
+      if (newIndex >= 0 && newIndex < activeQuestions.length) {
+        state.currentIndex = newIndex;
+        persistState();
+        renderApp();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function executeJump() {
+      const input = document.getElementById('jump-input');
+      const val = parseInt(input.value);
+      const activeQuestions = getFilteredQuestions();
+
+      if (!isNaN(val) && val >= 1 && val <= activeQuestions.length) {
+        state.currentIndex = val - 1;
+        persistState();
+        renderApp();
+        input.value = '';
+        input.blur(); // Dismisses mobile virtual keyboard
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert(`Enter a question number between 1 and ${activeQuestions.length}`);
+      }
+    }
+
+    function handleUnitFilterChange(unitValue) {
+      state.onlyBookmarks = false;
+      state.selectedUnit = unitValue;
+      state.currentIndex = 0;
+      persistState();
+      renderApp();
+    }
+
+    function handlePYQToggle(isChecked) {
+      state.pyqsOnly = isChecked;
+      state.currentIndex = 0;
+      persistState();
+      renderApp();
+    }
+
+    function setFilterMode(mode) {
+      state.onlyBookmarks = false;
+      state.selectedUnit = mode;
+      state.currentIndex = 0;
+      persistState();
+      renderApp();
+    }
+
+    function toggleBookmarkOnlyFilter() {
+      if (state.bookmarks.length === 0) {
+        alert("You have not bookmarked any questions yet. Tap the bookmark ribbon on any question to add it.");
+        return;
+      }
+      state.onlyBookmarks = !state.onlyBookmarks;
+      state.currentIndex = 0;
+      persistState();
+      renderApp();
+    }
+
+    function toggleBookmarkCurrent() {
+      const activeQuestions = getFilteredQuestions();
+      if (!activeQuestions[state.currentIndex]) return;
+      
+      const qId = activeQuestions[state.currentIndex].id;
+      const idx = state.bookmarks.indexOf(qId);
+      if (idx > -1) {
+        state.bookmarks.splice(idx, 1);
+      } else {
+        state.bookmarks.push(qId);
+      }
+      persistState();
+      renderApp();
+    }
+
+    /* Drawer Actions */
+    function openDrawer() {
+      const drawer = document.getElementById('sidebar-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      drawer.classList.remove('-translate-x-full');
+      backdrop.classList.remove('hidden');
+      setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeDrawer() {
+      const drawer = document.getElementById('sidebar-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      drawer.classList.add('-translate-x-full');
+      backdrop.classList.add('opacity-0');
+      setTimeout(() => backdrop.classList.add('hidden'), 260);
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    /* Fast Paginated Palette (Scales easily to 5,000 Questions) */
+    const PALETTE_CHUNK_SIZE = 50;
+
+    function openPalette() {
+      const modal = document.getElementById('palette-modal');
+      const select = document.getElementById('palette-range-select');
+      const activeQuestions = getFilteredQuestions();
+
+      const totalChunks = Math.ceil(activeQuestions.length / PALETTE_CHUNK_SIZE);
+      select.innerHTML = '';
+
+      for (let i = 0; i < totalChunks; i++) {
+        const start = i * PALETTE_CHUNK_SIZE + 1;
+        const end = Math.min((i + 1) * PALETTE_CHUNK_SIZE, activeQuestions.length);
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.innerText = `Questions ${start} - ${end}`;
+        select.appendChild(opt);
+      }
+
+      // Default to chunk containing current question
+      const currentChunk = Math.floor(state.currentIndex / PALETTE_CHUNK_SIZE);
+      select.value = currentChunk;
+      renderPaletteGrid(currentChunk);
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function renderPaletteGrid(chunkIndex) {
+      const grid = document.getElementById('palette-grid');
+      const activeQuestions = getFilteredQuestions();
+      const start = chunkIndex * PALETTE_CHUNK_SIZE;
+      const end = Math.min(start + PALETTE_CHUNK_SIZE, activeQuestions.length);
+
+      const items = activeQuestions.slice(start, end);
+
+      grid.innerHTML = items.map((q, localIdx) => {
+        const globalIdx = start + localIdx;
+        let btnStyle = "bg-slate-100 text-slate-700 border-slate-300";
+        if (state.userAnswers.hasOwnProperty(q.id)) {
+          if (state.userAnswers[q.id] === q.correctAnswer) {
+            btnStyle = "bg-emerald-500 text-white border-emerald-600 font-bold";
+          } else {
+            btnStyle = "bg-rose-500 text-white border-rose-600 font-bold";
+          }
+        }
+        const isCurrent = (globalIdx === state.currentIndex);
+        return `
+          <button onclick="jumpToQuestion(${globalIdx})" 
+                  class="p-2 rounded-md border text-xs font-semibold transition ${btnStyle} ${isCurrent ? 'ring-2 ring-blue-600 ring-offset-1' : ''}">
+            ${globalIdx + 1}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function closePalette() {
+      const modal = document.getElementById('palette-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    function jumpToQuestion(idx) {
+      state.currentIndex = idx;
+      persistState();
+      closePalette();
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* JSON Importer / Exporter Module */
+    function openJsonModal() {
+      const modal = document.getElementById('json-modal');
+      const feedback = document.getElementById('json-feedback');
+      feedback.classList.add('hidden');
+      document.getElementById('json-input').value = '';
+      document.getElementById('json-file-input').value = '';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeJsonModal() {
+      const modal = document.getElementById('json-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        document.getElementById('json-input').value = event.target.result;
+      };
+      reader.readAsText(file);
+    }
+
+    function insertSampleJson() {
+      const sample = [
+        {
+          "id": 11,
+          "unit": "UNIT-I",
+          "unitName": "Constitutional & Administrative Law",
+          "isPYQ": true,
+          "pyqYear": "2023",
+          "question": "Which Article of the Constitution of India provides for the power of the President to consult the Supreme Court (Advisory Jurisdiction)?",
+          "options": [
+            "Article 141",
+            "Article 143",
+            "Article 136",
+            "Article 131"
+          ],
+          "correctAnswer": 1,
+          "analysis": {
+            "concept": "Article 143 confers advisory jurisdiction on the Supreme Court to give its opinion on questions of law or fact referred by the President.",
+            "statutes": "Article 143 of the Constitution of India.",
+            "precedents": "In re Special Courts Bill (1979); In re Berubari Union (1960).",
+            "examTip": "The opinion delivered under Article 143 is advisory and not binding on the President or Courts within the meaning of Article 141."
+          }
+        }
+      ];
+      document.getElementById('json-input').value = JSON.stringify(sample, null, 2);
+    }
+
+    function importJsonData() {
+      const raw = document.getElementById('json-input').value.trim();
+      const feedback = document.getElementById('json-feedback');
+
+      if (!raw) {
+        feedback.className = "p-2.5 rounded text-xs bg-rose-100 text-rose-800 font-semibold";
+        feedback.innerText = "Please paste JSON or upload a file first.";
+        feedback.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        let parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) parsed = [parsed];
+
+        // Safe loop ID calculation (Prevents RangeError call-stack crash on 5000 Qs)
+        let maxId = 0;
+        for (let i = 0; i < QUESTION_BANK.length; i++) {
+          if (QUESTION_BANK[i].id > maxId) maxId = QUESTION_BANK[i].id;
+        }
+
+        let validCount = 0;
+        parsed.forEach(item => {
+          if (item.question && Array.isArray(item.options) && typeof item.correctAnswer === 'number') {
+            maxId++;
+            QUESTION_BANK.push({
+              id: item.id || maxId,
+              unit: item.unit || "UNIT-I",
+              unitName: item.unitName || "Law",
+              isPYQ: !!item.isPYQ,
+              pyqYear: item.pyqYear || null,
+              question: item.question,
+              options: item.options,
+              correctAnswer: item.correctAnswer,
+              analysis: item.analysis || {
+                concept: "Academic analysis provided.",
+                statutes: "Relevant provisions.",
+                precedents: "Case law references.",
+                examTip: "Exam revision note."
+              }
+            });
+            validCount++;
+          }
+        });
+
+        if (validCount === 0) throw new Error("No questions conformed to the required schema.");
+
+        saveQuestionBank();
+        renderApp();
+
+        feedback.className = "p-2.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold";
+        feedback.innerText = `Successfully imported ${validCount} questions! Current bank total: ${QUESTION_BANK.length}`;
+        feedback.classList.remove('hidden');
+
+        setTimeout(() => closeJsonModal(), 1200);
+
+      } catch (err) {
+        feedback.className = "p-2.5 rounded text-xs bg-rose-100 text-rose-800 font-semibold";
+        feedback.innerText = `Import Error: ${err.message}`;
+        feedback.classList.remove('hidden');
+      }
+    }
+
+    function exportQuestionsJson() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(QUESTION_BANK, null, 2));
+      const anchor = document.createElement('a');
+      anchor.setAttribute("href", dataStr);
+      anchor.setAttribute("download", `upessc_law_subject64_${QUESTION_BANK.length}_questions.json`);
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+    }
+
+    /* Accuracy & Stats Calculation */
+    function updateDrawerStats() {
+      const totalAnswered = Object.keys(state.userAnswers).length;
+      let totalCorrect = 0;
+
+      QUESTION_BANK.forEach(q => {
+        if (state.userAnswers[q.id] === q.correctAnswer) totalCorrect++;
+      });
+
+      const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+
+      document.getElementById('drawer-attempted').innerText = totalAnswered;
+      document.getElementById('drawer-accuracy').innerText = `${accuracy}%`;
+      document.getElementById('drawer-accuracy-bar').style.width = `${accuracy}%`;
+    }
+
+    function confirmReset() {
+      if (confirm("Reset current test scores and bookmarks? (Your question bank will be preserved)")) {
+        state = {
+          selectedUnit: 'ALL',
+          pyqsOnly: false,
+          onlyBookmarks: false,
+          currentIndex: 0,
+          userAnswers: {},
+          bookmarks: []
+        };
+        persistState();
+        closeDrawer();
+        renderApp();
+      }
+    }
+
+    /* Touch Gestures: Swipe Left (Next) / Swipe Right (Prev) */
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const surface = document.getElementById('swipe-surface');
+
+    surface.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    surface.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+        if (diffX < 0) {
+          navigateQuestion(1);
+        } else {
+          navigateQuestion(-1);
+        }
+      }
+    }, { passive: true });
+
+    /* Initialize Application */
+    document.addEventListener('DOMContentLoaded', () => {
+      loadQuestionBank();
+      renderApp();
+    });
+  </script>
+</body>
+</html>
